@@ -1,4 +1,8 @@
+import Link from "next/link";
+
+import { PageHeader } from "@/components/common/page-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { createClient, getCurrentUser } from "@/lib/supabase/server";
@@ -21,10 +25,15 @@ export default async function RecruiterDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Your job descriptions</h1>
-        <p className="text-muted-foreground">Post a JD to see how many registered candidates qualify and who ranks highest.</p>
-      </div>
+      <PageHeader
+        title="Your job descriptions"
+        description="Open a role to see ranked candidates and manage its interview pipeline."
+        actions={
+          <Button asChild>
+            <Link href="/recruiter/post-jd">Post a job description</Link>
+          </Button>
+        }
+      />
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Postings</CardTitle>
@@ -45,7 +54,11 @@ export default async function RecruiterDashboardPage() {
               <TableBody>
                 {jds.map((jd) => (
                   <TableRow key={jd.id}>
-                    <TableCell className="font-medium">{jd.title}</TableCell>
+                    <TableCell className="font-medium">
+                      <Link href={`/recruiter/jobs/${jd.id}`} className="underline-offset-4 hover:underline">
+                        {jd.title}
+                      </Link>
+                    </TableCell>
                     <TableCell>
                       <Badge variant={jd.status === "active" ? "default" : "secondary"}>{jd.status}</Badge>
                     </TableCell>
