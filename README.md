@@ -7,7 +7,7 @@ The backend is a separate service and repo, `hiring-bazaar-api` (FastAPI +
 the ML layer). The two only talk over HTTP and through Supabase:
 
 ```
-hiring-bazaar-web (Next.js 14) ──REST + Bearer JWT──▶ hiring-bazaar-api (FastAPI, ML)
+hiring-bazaar-web (Next.js 15) ──REST + Bearer JWT──▶ hiring-bazaar-api (FastAPI, ML)
         │                                                  │
         └──── supabase-js (auth, read-only via RLS) ───────┴── Supabase (Postgres + pgvector + Auth)
 ```
@@ -22,7 +22,7 @@ hiring-bazaar-web (Next.js 14) ──REST + Bearer JWT──▶ hiring-bazaar-ap
 
 ## Stack
 
-Next.js 14 (App Router) · TypeScript (strict) · Tailwind CSS 3 · shadcn/ui ·
+Next.js 15 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 3 · shadcn/ui ·
 TanStack Query · Zustand · Recharts · Supabase JS.
 
 ## Setup
@@ -77,10 +77,10 @@ src/
 
 ## Known follow-ups
 
-- **Next.js 14 security advisories.** 14.2.35 is the last 14.x release; fixes
-  for the open advisories (React Server Components DoS, image optimizer and
-  rewrites issues) ship only in Next 15+/16. The app avoids `remotePatterns`
-  and `rewrites`. Revisit the version before production.
+- **Next.js version.** Upgraded from 14 to 15 before production: 14.2.35 (the last
+  14.x) had unpatched advisories (React Server Components DoS, image
+  optimizer, rewrites). `npm audit` still lists the postcss copy bundled in
+  Next; it only processes this app's own CSS at build time.
 - **College at signup.** The signed-out key cannot read any table (by design),
   so registration does not offer a college list yet; it needs a small public
   API endpoint.

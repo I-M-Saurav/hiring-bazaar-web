@@ -6,8 +6,8 @@ import { env } from "@/lib/env";
 import type { Database } from "@/lib/supabase/database.types";
 
 /** Supabase client for Server Components, Route Handlers and Server Actions. */
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();
   return createServerClient<Database>(env.supabaseUrl, env.supabaseAnonKey, {
     cookies: {
       getAll() {
@@ -38,7 +38,7 @@ export interface CurrentUser {
  * anything the browser could set.
  */
 export async function getCurrentUser(): Promise<CurrentUser | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

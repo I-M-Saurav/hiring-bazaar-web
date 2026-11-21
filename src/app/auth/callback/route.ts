@@ -12,7 +12,8 @@ export async function GET(request: NextRequest) {
   const home = new URL("/", request.url);
 
   if (code) {
-    const { error } = await createClient().auth.exchangeCodeForSession(code);
+    const supabase = await createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(home);
   }
   const login = new URL("/auth/login", request.url);

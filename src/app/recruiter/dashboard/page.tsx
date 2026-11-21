@@ -12,7 +12,8 @@ export default async function RecruiterDashboardPage() {
   const user = await getCurrentUser();
   if (!user) return null; // the layout already redirected
 
-  const { data: jds, error } = await createClient()
+  const supabase = await createClient();
+  const { data: jds, error } = await supabase
     .from("job_descriptions")
     .select("id, title, status, location, package_lpa, min_cgpa, created_at")
     .eq("recruiter_id", user.id)
