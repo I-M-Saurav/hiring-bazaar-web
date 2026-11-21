@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 import { Providers } from "@/app/providers";
+import { AuthHashHandler } from "@/components/auth/auth-hash-handler";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -24,7 +25,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AuthHashHandler />
+          {children}
+        </Providers>
       </body>
     </html>
   );

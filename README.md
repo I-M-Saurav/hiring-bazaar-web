@@ -75,6 +75,21 @@ src/
 
 `npm run dev` · `npm run build` · `npm run lint` · `npx tsc --noEmit`
 
+## Deploy (Vercel)
+
+1. Deploy `hiring-bazaar-api` first (Railway; see its README) and note its URL.
+2. Vercel → Add New → Project → import `hiring-bazaar-web` (framework: Next.js,
+   defaults are fine).
+3. Environment variables: `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_API_URL=https://<railway-domain>`.
+4. Deploy, then:
+   - add the Vercel domain to the API's `CORS_ALLOWED_ORIGINS` on Railway;
+   - Supabase → Authentication → URL Configuration: Site URL
+     `https://<vercel-domain>`, redirect URL `https://<vercel-domain>/auth/callback`.
+
+`NEXT_PUBLIC_*` values are compiled into the bundle, so redeploy after
+changing them.
+
 ## Known follow-ups
 
 - **Next.js version.** Upgraded from 14 to 15 before production: 14.2.35 (the last
