@@ -58,6 +58,45 @@ export interface ReadinessResponse {
   readiness: ReadinessResult;
 }
 
+// --- Candidate profile (PUT /api/candidate/profile) -------------------------------------
+export interface ProjectInput {
+  title: string;
+  description: string;
+  year: number | null;
+  tech_stack: string[];
+}
+
+export interface InternshipInput {
+  company: string;
+  role: string | null;
+  /** companies.tier convention: 1 FAANG/top-tier, 2 product, 3 service */
+  tier: 1 | 2 | 3 | null;
+  year: number | null;
+  duration_months: number | null;
+}
+
+export interface CandidateProfileInput {
+  name: string;
+  branch: string | null;
+  batch_year: number | null;
+  cgpa: number | null;
+  backlogs: number;
+  cp_rating: number | null;
+  cp_platform: string | null;
+  skills: string[];
+  projects: ProjectInput[];
+  internships: InternshipInput[];
+}
+
+export interface ProfileSaveResponse {
+  candidate_id: string;
+  skill_depth_score: number;
+  resume_completeness: number;
+  cgpa_percentile_in_branch: number | null;
+  embedded: boolean;
+  readiness: ReadinessResponse;
+}
+
 // --- Resume parsing (POST /api/parse-resume) ------------------------------------------
 export interface ParsedResume {
   name: string | null;

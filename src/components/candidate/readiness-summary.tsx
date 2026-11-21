@@ -1,12 +1,17 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
+import { ShapChart } from "@/components/candidate/shap-chart";
 import { QueryError } from "@/components/common/query-error";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useApi } from "@/hooks/use-api";
 
 function band(score: number): { label: string; variant: "default" | "secondary" | "destructive" } {
@@ -15,13 +20,27 @@ function band(score: number): { label: string; variant: "default" | "secondary" 
   return { label: "Significantly behind", variant: "destructive" };
 }
 
-export function ReadinessSummary({ candidateId }: { candidateId: string }) {
+export function ReadinessSummary({ candidateId, hasProfile }: { candidateId: string; hasProfile: boolean }) {
   const withApi = useApi();
   const { data, error, isPending } = useQuery({
     queryKey: ["readiness", candidateId],
     queryFn: () => withApi((api) => api.readiness(candidateId)),
+    enabled: hasProfile,
   });
 
+  if (!hasProfile) {
+    return (
+      <Alert>
+        <AlertTitle>Build your profile first</AlertTitle>
+        <AlertDescription className="space-y-3">
+          <p>Upload your resume and review what we extract. Your three readiness scores are computed from it.</p>
+          <Button asChild size="sm">
+            <Link href="/candidate/profile">Set up my profile</Link>
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
+  }
   if (isPending) {
     return (
       <div className="grid gap-4 md:grid-cols-3">
@@ -68,6 +87,31 @@ export function ReadinessSummary({ candidateId }: { candidateId: string }) {
           </Card>
         ))}
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Why each score is what it is</CardTitle>
+          <CardDescription>
+            Points each factor adds or removes, compared with a typical candidate (SHAP values from the model).
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue={readiness.stages[1]?.key ?? readiness.stages[0].key}>
+            <TabsList>
+              {readiness.stages.map((stage) => (
+                <TabsTrigger key={stage.key} value={stage.key}>
+                  {stage.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {readiness.stages.map((stage) => (
+              <TabsContent key={stage.key} value={stage.key}>
+                <ShapChart contributions={stage.contributions} />
+              </TabsContent>
+            ))}
+          </Tabs>
+        </CardContent>
+      </Card>
 
       {readiness.top_gaps.length > 0 ? (
         <Card>

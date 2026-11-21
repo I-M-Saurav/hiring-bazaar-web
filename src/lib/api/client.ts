@@ -9,6 +9,7 @@ import type {
   Application,
   ApplicationStage,
   BatchAnalyticsResponse,
+  CandidateProfileInput,
   JDCreateRequest,
   JDCreateResponse,
   MatchedJDsResponse,
@@ -16,6 +17,7 @@ import type {
   MatchResponse,
   ParsedResume,
   PipelineResponse,
+  ProfileSaveResponse,
   ReadinessResponse,
   ShortlistResponse,
 } from "@/lib/api/types";
@@ -39,7 +41,7 @@ export class ApiError extends Error {
   }
 }
 
-type Method = "GET" | "POST" | "PATCH";
+type Method = "GET" | "POST" | "PUT" | "PATCH";
 
 async function request<T>(token: string, method: Method, path: string, body?: BodyInit | object): Promise<T> {
   const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
@@ -78,6 +80,9 @@ export function createApiClient(token: string) {
       const form = new FormData();
       form.append("file", file);
       return request<ParsedResume>(token, "POST", "/api/parse-resume", form);
+    },
+    saveProfile(profile: CandidateProfileInput) {
+      return request<ProfileSaveResponse>(token, "PUT", "/api/candidate/profile", profile);
     },
     embedCandidate(candidateId: string) {
       return request<{ success: boolean; embedding_dim: number }>(token, "POST", "/api/embed-candidate", {
